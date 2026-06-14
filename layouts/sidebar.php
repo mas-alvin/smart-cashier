@@ -1,0 +1,176 @@
+<?php
+// layouts/sidebar.php
+// Sidebar navigasi kiri dengan kontrol hak akses (Role-Based Access Control)
+
+$user_role = $_SESSION['role'] ?? '';
+$user_name = $_SESSION['nama_lengkap'] ?? 'User';
+?>
+<!-- Sidebar Kiri -->
+<aside class="w-[280px] bg-white border-r border-slate-200 h-screen sticky top-0 flex flex-col justify-between flex-shrink-0 z-30">
+    <div class="flex flex-col h-full overflow-y-auto">
+        <!-- Logo Section -->
+        <div class="p-6 border-b border-slate-100 flex items-center space-x-3">
+            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-100">
+                <i data-lucide="store" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-slate-800 tracking-tight text-lg leading-none">SMARTPOS</h1>
+                <span class="text-xs text-slate-400 font-medium tracking-wide uppercase">UMKM EDITION</span>
+            </div>
+        </div>
+
+        <!-- Navigation Menus -->
+        <nav class="flex-1 px-4 py-6 space-y-7">
+            <!-- UTAMA -->
+            <div>
+                <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase px-3">Utama</span>
+                <div class="mt-2 space-y-1">
+                    <a href="/smart-cashier/dashboard/index.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/dashboard/') ?>">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- MASTER DATA (Only Admin) -->
+            <?php if ($user_role === 'admin'): ?>
+            <div>
+                <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase px-3">Master Data</span>
+                <div class="mt-2 space-y-1">
+                    <a href="/smart-cashier/master/produk/index.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/master/produk/') ?>">
+                        <i data-lucide="package" class="w-4 h-4"></i>
+                        <span>Produk</span>
+                    </a>
+                    <a href="/smart-cashier/master/kategori/index.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/master/kategori/') ?>">
+                        <i data-lucide="tags" class="w-4 h-4"></i>
+                        <span>Kategori</span>
+                    </a>
+                    <a href="/smart-cashier/master/supplier/index.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/master/supplier/') ?>">
+                        <i data-lucide="truck" class="w-4 h-4"></i>
+                        <span>Supplier</span>
+                    </a>
+                    <a href="/smart-cashier/master/pengguna/index.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/master/pengguna/') ?>">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>Pengguna</span>
+                    </a>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- TRANSAKSI (Admin and Kasir) -->
+            <?php if ($user_role === 'admin' || $user_role === 'kasir'): ?>
+            <div>
+                <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase px-3">Transaksi</span>
+                <div class="mt-2 space-y-1">
+                    <a href="/smart-cashier/transaksi/kasir.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/transaksi/kasir.php') ?>">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                        <span>Kasir (POS)</span>
+                    </a>
+                    <a href="/smart-cashier/transaksi/riwayat.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/transaksi/riwayat.php') ?>">
+                        <i data-lucide="history" class="w-4 h-4"></i>
+                        <span>Riwayat Transaksi</span>
+                    </a>
+                    <a href="/smart-cashier/transaksi/retur.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/transaksi/retur.php') ?>">
+                        <i data-lucide="undo-2" class="w-4 h-4"></i>
+                        <span>Retur Penjualan</span>
+                    </a>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- KEUANGAN (Admin and Owner) -->
+            <?php if ($user_role === 'admin' || $user_role === 'owner'): ?>
+            <div>
+                <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase px-3">Keuangan</span>
+                <div class="mt-2 space-y-1">
+                    <a href="/smart-cashier/keuangan/pengeluaran.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/keuangan/pengeluaran.php') ?>">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                        <span>Pengeluaran</span>
+                    </a>
+                    <a href="/smart-cashier/keuangan/laba_kotor.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/keuangan/laba_kotor.php') ?>">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                        <span>Laba Kotor</span>
+                    </a>
+                    <a href="/smart-cashier/keuangan/laba_bersih.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/keuangan/laba_bersih.php') ?>">
+                        <i data-lucide="line-chart" class="w-4 h-4"></i>
+                        <span>Laba Bersih</span>
+                    </a>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- LAPORAN & ANALITIK (Admin and Owner) -->
+            <?php if ($user_role === 'admin' || $user_role === 'owner'): ?>
+            <div>
+                <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase px-3">Laporan & Analitik</span>
+                <div class="mt-2 space-y-1">
+                    <a href="/smart-cashier/laporan/penjualan.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/laporan/penjualan.php') ?>">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Laporan Penjualan</span>
+                    </a>
+                    <a href="/smart-cashier/laporan/stok.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/laporan/stok.php') ?>">
+                        <i data-lucide="package-search" class="w-4 h-4"></i>
+                        <span>Laporan Stok</span>
+                    </a>
+                    <a href="/smart-cashier/laporan/produk_terlaris.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/laporan/produk_terlaris.php') ?>">
+                        <i data-lucide="star" class="w-4 h-4"></i>
+                        <span>Produk Terlaris</span>
+                    </a>
+                    <a href="/smart-cashier/laporan/keuntungan.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/laporan/keuntungan.php') ?>">
+                        <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+                        <span>Laporan Keuntungan</span>
+                    </a>
+                    <a href="/smart-cashier/analitik/grafik_penjualan.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/analitik/grafik_penjualan.php') ?>">
+                        <i data-lucide="pie-chart" class="w-4 h-4"></i>
+                        <span>Grafik Analitik</span>
+                    </a>
+                    <a href="/smart-cashier/analitik/prediksi_stok.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/analitik/prediksi_stok.php') ?>">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>Prediksi Stok Habis</span>
+                    </a>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- PENGATURAN -->
+            <div>
+                <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase px-3">Pengaturan</span>
+                <div class="mt-2 space-y-1">
+                    <?php if ($user_role === 'admin' || $user_role === 'owner'): ?>
+                    <a href="/smart-cashier/pengaturan/profil.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/pengaturan/profil.php') ?>">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>Profil Toko</span>
+                    </a>
+                    <a href="/smart-cashier/pengaturan/backup.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/pengaturan/backup.php') ?>">
+                        <i data-lucide="database" class="w-4 h-4"></i>
+                        <span>Backup Database</span>
+                    </a>
+                    <?php endif; ?>
+                    <a href="/smart-cashier/pengaturan/ganti_password.php" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm transition-all <?= is_active('/pengaturan/ganti_password.php') ?>">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                        <span>Ganti Password</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Current User Profile Card in Sidebar Footer -->
+        <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div class="flex items-center space-x-3 overflow-hidden">
+                <div class="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-sm flex-shrink-0">
+                    <?= strtoupper(substr($user_name, 0, 2)) ?>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-sm font-semibold text-slate-800 truncate leading-tight"><?= htmlspecialchars($user_name) ?></p>
+                    <span class="text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded-md font-semibold uppercase tracking-wider"><?= htmlspecialchars($user_role) ?></span>
+                </div>
+            </div>
+            <a href="/smart-cashier/login.php?action=logout" class="text-slate-400 hover:text-red-500 transition-colors p-1" title="Keluar">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+            </a>
+        </div>
+    </div>
+</aside>
+
+<!-- Area Content Utama (Kanan) -->
+<div class="flex-1 flex flex-col min-w-0">
