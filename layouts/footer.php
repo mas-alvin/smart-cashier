@@ -22,6 +22,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <script>
         // Inisialisasi ikon Lucide
         lucide.createIcons();
+
+        // Toggle Sidebar Drawer (Mobile)
+        function toggleSidebarDrawer() {
+            const sidebar = document.getElementById('sidebar-navigation');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (!sidebar || !overlay) return;
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
     </script>
 
     <!-- Tampilkan Flash Alert SweetAlert2 -->

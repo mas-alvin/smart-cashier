@@ -5,7 +5,11 @@
 <!-- Top Sticky Navbar -->
 <header class="h-16 bg-white border-b border-slate-200 sticky top-0 z-20 flex items-center justify-between px-8">
     <!-- Left Section: Search or Store Title -->
-    <div class="flex items-center space-x-3">
+    <div class="flex items-center space-x-1 lg:space-x-3">
+        <!-- Hamburger Menu Button (Mobile Only) -->
+        <button type="button" onclick="toggleSidebarDrawer()" class="lg:hidden p-2 hover:bg-slate-100 rounded-lg text-slate-500 mr-1 cursor-pointer">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
         <?php if (!empty($logo_toko) && file_exists(dirname(__DIR__) . '/assets/uploads/' . $logo_toko)): ?>
             <img src="/assets/uploads/<?= $logo_toko ?>" alt="Logo" class="w-8 h-8 rounded-lg object-cover">
         <?php else: ?>

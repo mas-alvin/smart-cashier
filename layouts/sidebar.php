@@ -5,8 +5,35 @@
 $user_role = $_SESSION['role'] ?? '';
 $user_name = $_SESSION['nama_lengkap'] ?? 'User';
 ?>
+<style>
+    @media (max-width: 1023px) {
+        #sidebar-navigation {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            transform: translateX(-100%) !important;
+            transition: transform 0.3s ease-in-out !important;
+            z-index: 50 !important;
+        }
+        #sidebar-navigation.open {
+            transform: translateX(0) !important;
+        }
+        #sidebar-overlay {
+            display: none;
+            position: fixed !important;
+            inset: 0 !important;
+            background-color: rgba(15, 23, 42, 0.4) !important;
+            backdrop-filter: blur(4px) !important;
+            z-index: 40 !important;
+        }
+        #sidebar-overlay.open {
+            display: block !important;
+        }
+    }
+</style>
+
 <!-- Sidebar Kiri -->
-<aside class="w-[280px] bg-white border-r border-slate-200 h-screen sticky top-0 flex flex-col justify-between flex-shrink-0 z-30">
+<aside id="sidebar-navigation" class="w-[280px] bg-white border-r border-slate-200 h-screen lg:sticky flex flex-col justify-between flex-shrink-0">
     <div class="flex flex-col h-full overflow-y-auto">
         <!-- Logo Section -->
         <div class="p-6 border-b border-slate-100 flex items-center space-x-3">
@@ -180,6 +207,9 @@ $user_name = $_SESSION['nama_lengkap'] ?? 'User';
         </div>
     </div>
 </aside>
+
+<!-- Overlay untuk Sidebar Drawer di Mobile -->
+<div id="sidebar-overlay" onclick="toggleSidebarDrawer()" class="lg:hidden"></div>
 
 <!-- Area Content Utama (Kanan) -->
 <div class="flex-1 flex flex-col min-w-0">

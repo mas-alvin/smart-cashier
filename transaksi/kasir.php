@@ -101,10 +101,31 @@ if (isset($_POST['action']) && $_POST['action'] === 'checkout') {
 }
 ?>
 
+<style>
+    @media (max-width: 1023px) {
+        .mobile-hidden {
+            display: none !important;
+        }
+    }
+</style>
+
 <!-- Halaman Kasir Layout -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-140px)]">
-    <!-- KOLOM KIRI: Daftar Produk Grid (7 dari 12 kolom) -->
-    <div class="lg:col-span-7 flex flex-col h-full overflow-hidden space-y-6">
+<div class="w-full flex flex-col h-[calc(100vh-150px)] lg:h-[calc(100vh-140px)]">
+    <!-- Mobile Tab Bar (Hanya muncul di Mobile/Tablet < lg) -->
+    <div class="lg:hidden flex bg-slate-100 p-1 rounded-xl mb-4 border border-slate-200/50 flex-shrink-0">
+        <button type="button" onclick="switchMobileTab('produk')" id="tab-btn-produk"
+            class="flex-1 py-2 text-xs font-bold text-center rounded-lg transition-all bg-white text-indigo-600 shadow-sm cursor-pointer">
+            Daftar Produk
+        </button>
+        <button type="button" onclick="switchMobileTab('keranjang')" id="tab-btn-keranjang"
+            class="flex-1 py-2 text-xs font-bold text-center rounded-lg transition-all text-slate-500 hover:text-slate-700 cursor-pointer">
+            Keranjang (<span id="mobile-cart-count">0</span>)
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 h-full overflow-hidden">
+        <!-- KOLOM KIRI: Daftar Produk Grid (7 dari 12 kolom) -->
+        <div id="kolom-produk" class="lg:col-span-7 flex flex-col h-full overflow-hidden space-y-6">
         <!-- Header, Cari, dan Filter Kategori -->
         <div class="space-y-4 flex-shrink-0">
             <div>
@@ -225,10 +246,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'checkout') {
                 <?php endwhile; ?>
             </div>
         </div>
-    </div>
+        </div>
 
-    <!-- KOLOM KANAN: Keranjang Belanja & Pembayaran (5 dari 12 kolom) -->
-    <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between h-full shadow-sm overflow-hidden">
+        <!-- KOLOM KANAN: Keranjang Belanja & Pembayaran (5 dari 12 kolom) -->
+        <div id="kolom-keranjang" class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between h-full shadow-sm overflow-hidden mobile-hidden">
         <!-- Form Utama POS -->
         <form action="kasir.php" method="POST" id="checkout-form" class="flex flex-col h-full justify-between">
             <input type="hidden" name="action" value="checkout">
@@ -298,6 +319,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'checkout') {
             </div>
         </form>
     </div>
+    </div>
 </div>
 
 <?php
@@ -320,6 +342,26 @@ const productsList = <?= json_encode($prod_lookup_list) ?>;
 
 // State Keranjang POS (Local Array Memory)
 let cart = [];
+
+// Mobile Tab Toggle
+function switchMobileTab(tab) {
+    const kolomProduk = document.getElementById('kolom-produk');
+    const kolomKeranjang = document.getElementById('kolom-keranjang');
+    const btnProduk = document.getElementById('tab-btn-produk');
+    const btnKeranjang = document.getElementById('tab-btn-keranjang');
+    
+    if (tab === 'produk') {
+        kolomProduk.classList.remove('mobile-hidden');
+        kolomKeranjang.classList.add('mobile-hidden');
+        btnProduk.className = "flex-1 py-2 text-xs font-bold text-center rounded-lg transition-all bg-white text-indigo-600 shadow-sm cursor-pointer";
+        btnKeranjang.className = "flex-1 py-2 text-xs font-bold text-center rounded-lg transition-all text-slate-500 hover:text-slate-700 cursor-pointer";
+    } else {
+        kolomProduk.classList.add('mobile-hidden');
+        kolomKeranjang.classList.remove('mobile-hidden');
+        btnProduk.className = "flex-1 py-2 text-xs font-bold text-center rounded-lg transition-all text-slate-500 hover:text-slate-700 cursor-pointer";
+        btnKeranjang.className = "flex-1 py-2 text-xs font-bold text-center rounded-lg transition-all bg-white text-indigo-600 shadow-sm cursor-pointer";
+    }
+}
 
 // Tambah ke Keranjang
 function addToCart(produk) {
@@ -397,6 +439,9 @@ function updateCartUI() {
     items.forEach(el => el.remove());
     
     if (cart.length === 0) {
+        if (document.getElementById('mobile-cart-count')) {
+            document.getElementById('mobile-cart-count').innerText = '0';
+        }
         cartEmpty.classList.remove('hidden');
         document.getElementById('total-qty-text').innerText = '0 Pcs';
         document.getElementById('total-harga-text').innerText = 'Rp 0';
@@ -449,6 +494,9 @@ function updateCartUI() {
     });
     
     // Update Ringkasan Total
+    if (document.getElementById('mobile-cart-count')) {
+        document.getElementById('mobile-cart-count').innerText = totalQty;
+    }
     document.getElementById('total-qty-text').innerText = totalQty + ' Pcs';
     document.getElementById('total-harga-text').innerText = formatRupiah(totalHarga);
     document.getElementById('total-harga-input').value = totalHarga;
