@@ -70,10 +70,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <!-- Header Brand -->
             <div class="flex flex-col items-center mb-8">
-                <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100 mb-4">
-                    <i data-lucide="store" class="w-7 h-7"></i>
-                </div>
-                <h1 class="text-2xl font-bold text-slate-800 tracking-tight">SMARTPOS UMKM</h1>
+                <?php if (!empty($logo_toko) && file_exists(__DIR__ . '/assets/uploads/' . $logo_toko)): ?>
+                    <img src="/assets/uploads/<?= $logo_toko ?>" alt="Logo" class="w-14 h-14 rounded-2xl object-cover shadow-lg shadow-indigo-100 mb-4">
+                <?php else: ?>
+                    <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100 mb-4">
+                        <i data-lucide="store" class="w-7 h-7"></i>
+                    </div>
+                <?php endif; ?>
+                <h1 class="text-2xl font-bold text-slate-800 tracking-tight"><?= htmlspecialchars($nama_toko) ?></h1>
                 <p class="text-sm text-slate-400 mt-1">Silakan masuk ke akun Anda</p>
             </div>
             

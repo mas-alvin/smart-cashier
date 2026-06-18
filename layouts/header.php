@@ -14,13 +14,19 @@ if ($current_page !== 'login.php' && !isset($_SESSION['user_id'])) {
     header("Location: /smart-cashier/login.php");
     exit();
 }
+
+// Dapatkan nama toko & logo secara dinamis dari database untuk digunakan secara global
+$toko_query = mysqli_query($conn, "SELECT nama_toko, logo FROM profil_toko LIMIT 1");
+$toko_info = mysqli_fetch_assoc($toko_query);
+$nama_toko = $toko_info['nama_toko'] ?? 'SMARTPOS UMKM';
+$logo_toko = $toko_info['logo'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMARTPOS UMKM - Kelola Toko Lebih Mudah</title>
+    <title><?= htmlspecialchars($nama_toko) ?> - Kelola Toko Lebih Mudah</title>
     
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

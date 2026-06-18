@@ -1,12 +1,6 @@
 <?php
 // layouts/navbar.php
 // Navbar bagian atas dengan pencarian, informasi toko, tanggal, dan profil singkat
-
-// Dapatkan nama toko dari database secara dinamis
-$toko_query = mysqli_query($conn, "SELECT nama_toko, logo FROM profil_toko LIMIT 1");
-$toko_info = mysqli_fetch_assoc($toko_query);
-$nama_toko = $toko_info['nama_toko'] ?? 'SMARTPOS UMKM';
-$logo_toko = $toko_info['logo'] ?? '';
 ?>
 <!-- Top Sticky Navbar -->
 <header class="h-16 bg-white border-b border-slate-200 sticky top-0 z-20 flex items-center justify-between px-8">

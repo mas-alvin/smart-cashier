@@ -10,12 +10,21 @@ $user_name = $_SESSION['nama_lengkap'] ?? 'User';
     <div class="flex flex-col h-full overflow-y-auto">
         <!-- Logo Section -->
         <div class="p-6 border-b border-slate-100 flex items-center space-x-3">
-            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-100">
-                <i data-lucide="store" class="w-5 h-5"></i>
-            </div>
-            <div>
-                <h1 class="font-bold text-slate-800 tracking-tight text-lg leading-none">SMARTPOS</h1>
-                <span class="text-xs text-slate-400 font-medium tracking-wide uppercase">UMKM EDITION</span>
+            <?php if (!empty($logo_toko) && file_exists(dirname(__DIR__) . '/assets/uploads/' . $logo_toko)): ?>
+                <img src="/assets/uploads/<?= $logo_toko ?>" alt="Logo" class="w-10 h-10 rounded-xl object-cover shadow-md shadow-indigo-100">
+            <?php else: ?>
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-100">
+                    <i data-lucide="store" class="w-5 h-5"></i>
+                </div>
+            <?php endif; ?>
+            <div class="overflow-hidden">
+                <?php
+                $words = explode(' ', trim($nama_toko));
+                $first_word = $words[0] ?? 'SMARTPOS';
+                $remaining_words = count($words) > 1 ? implode(' ', array_slice($words, 1)) : 'UMKM EDITION';
+                ?>
+                <h1 class="font-bold text-slate-800 tracking-tight text-lg leading-none truncate" title="<?= htmlspecialchars($nama_toko) ?>"><?= htmlspecialchars(strtoupper($first_word)) ?></h1>
+                <span class="text-[10px] text-slate-400 font-semibold tracking-wide uppercase block truncate" title="<?= htmlspecialchars($remaining_words) ?>"><?= htmlspecialchars(strtoupper($remaining_words)) ?></span>
             </div>
         </div>
 

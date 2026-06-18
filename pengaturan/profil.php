@@ -32,11 +32,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $alamat = trim(mysqli_real_escape_string($conn, $_POST['alamat']));
     
     if (!empty($nama_toko) && !empty($nomor_hp)) {
+        // Handle File Upload Logo
+        $logo_name = $profile['logo'];
+        $upload_dir = dirname(__DIR__) . '/assets/uploads/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+
+        if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+            $file_tmp = $_FILES['logo']['tmp_name'];
+            $file_name = $_FILES['logo']['name'];
+            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+            
+            $allowed_ext = ['jpg', 'jpeg', 'png', 'webp'];
+            if (in_array($file_ext, $allowed_ext)) {
+                // Hapus logo lama jika ada
+                if (!empty($logo_name) && file_exists($upload_dir . $logo_name)) {
+                    unlink($upload_dir . $logo_name);
+                }
+                
+                $logo_name = 'logo_' . time() . '_' . uniqid() . '.' . $file_ext;
+                move_uploaded_file($file_tmp, $upload_dir . $logo_name);
+            }
+        }
+
         $update_query = "UPDATE profil_toko SET 
                             nama_toko = '$nama_toko', 
                             nomor_hp = '$nomor_hp', 
                             email = '$email', 
-                            alamat = '$alamat' 
+                            alamat = '$alamat',
+                            logo = " . ($logo_name ? "'$logo_name'" : "NULL") . " 
                          WHERE id = {$profile['id']}";
         if (mysqli_query($conn, $update_query)) {
             set_flash('success', 'Berhasil Diperbarui', 'Profil identitas toko berhasil disimpan!');
@@ -75,9 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         <div class="md:col-span-4 space-y-6">
             <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm text-center flex flex-col items-center justify-center space-y-4">
                 <!-- Visual Mockup Logo Toko -->
-                <div class="w-20 h-20 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xl shadow-inner">
-                    <?= strtoupper(substr($profile['nama_toko'], 0, 2)) ?>
-                </div>
+                <?php if (!empty($profile['logo']) && file_exists(dirname(__DIR__) . '/assets/uploads/' . $profile['logo'])): ?>
+                    <img src="/assets/uploads/<?= $profile['logo'] ?>" alt="Logo Toko" class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-md">
+                <?php else: ?>
+                    <div class="w-20 h-20 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xl shadow-inner">
+                        <?= strtoupper(substr($profile['nama_toko'], 0, 2)) ?>
+                    </div>
+                <?php endif; ?>
                 <div>
                     <h3 class="font-bold text-slate-800 text-sm mt-2"><?= htmlspecialchars($profile['nama_toko']) ?></h3>
                     <p class="text-[10px] text-slate-400 uppercase tracking-wide font-semibold mt-1">Sistem Point of Sale</p>
@@ -98,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         <!-- Panel Form Input (Right 8 cols) -->
         <div class="md:col-span-8">
             <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
-                <form action="profil.php" method="POST" class="space-y-6 text-xs">
+                <form action="profil.php" method="POST" enctype="multipart/form-data" class="space-y-6 text-xs">
                     <input type="hidden" name="action" value="update_profile">
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -114,10 +143,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         </div>
                     </div>
 
-                    <div>
-                        <label for="email" class="block font-bold text-slate-500 uppercase tracking-wider mb-2">Email Toko</label>
-                        <input type="email" name="email" id="email" required value="<?= htmlspecialchars($profile['email']) ?>" placeholder="Masukkan email toko"
-                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="email" class="block font-bold text-slate-500 uppercase tracking-wider mb-2">Email Toko</label>
+                            <input type="email" name="email" id="email" required value="<?= htmlspecialchars($profile['email']) ?>" placeholder="Masukkan email toko"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all">
+                        </div>
+                        <div>
+                            <label for="logo" class="block font-bold text-slate-500 uppercase tracking-wider mb-2">Logo Toko <span class="text-[10px] text-slate-400 lowercase font-normal italic">(jpg, jpeg, png, webp)</span></label>
+                            <input type="file" name="logo" id="logo" accept="image/*"
+                                class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                        </div>
                     </div>
 
                     <div>

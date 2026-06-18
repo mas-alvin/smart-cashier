@@ -192,7 +192,7 @@ $email_toko = $toko['email'] ?? '-';
     <div class="footer text-center">
         <p class="bold">TERIMA KASIH</p>
         <p>Sudah berbelanja di tempat kami.</p>
-        <p>Struk ini dicetak otomatis menggunakan SMARTPOS UMKM.</p>
+        <p>Struk ini dicetak otomatis menggunakan <?= htmlspecialchars($nama_toko) ?>.</p>
     </div>
 
     <!-- Trigger Auto Print -->

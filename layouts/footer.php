@@ -9,7 +9,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <!-- Footer Info Toko (Hanya jika bukan halaman login) -->
         <?php if ($current_page !== 'login.php'): ?>
         <footer class="bg-white border-t border-slate-100 py-4 px-8 text-center text-xs text-slate-400">
-            <p>&copy; <?= date('Y') ?> <strong>SMARTPOS UMKM</strong>. Dikembangkan untuk Expo Jurusan Rekayasa Perangkat Lunak SMK.</p>
+            <p>&copy; <?= date('Y') ?> <strong><?= htmlspecialchars($nama_toko) ?></strong>. Dikembangkan untuk Expo Jurusan Rekayasa Perangkat Lunak SMK.</p>
         </footer>
         <?php endif; ?>
         
