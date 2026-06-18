@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS supplier (
 CREATE TABLE IF NOT EXISTS produk (
     id INT AUTO_INCREMENT PRIMARY KEY,
     foto VARCHAR(255) NULL,
+    barcode VARCHAR(50) UNIQUE NULL,
     nama_produk VARCHAR(100) NOT NULL,
     id_kategori INT NOT NULL,
     harga_beli DECIMAL(15,2) NOT NULL,
@@ -136,17 +137,17 @@ INSERT INTO supplier (id, nama_supplier, telepon, email, alamat) VALUES
 (3, 'Toko Berkah Utama', '08988776655', 'berkah.toko@gmail.com', 'Pasar Induk Kramat Jati Kios A1, Jakarta');
 
 -- SEED PRODUCTS
-INSERT INTO produk (id, foto, nama_produk, id_kategori, harga_beli, harga_jual, stok, status) VALUES
-(1, NULL, 'Indomie Goreng Rasa Ayam Panggang', 1, 2600.00, 3100.00, 150, 'aktif'),
-(2, NULL, 'Chitato Sapi Panggang 68g', 1, 9500.00, 11500.00, 45, 'aktif'),
-(3, NULL, 'Coca-Cola Zero Sugar 390ml', 2, 4800.00, 6000.00, 80, 'aktif'),
-(4, NULL, 'Teh Botol Sosro Kotak 250ml', 2, 2700.00, 3500.00, 120, 'aktif'),
-(5, NULL, 'Beras Pandan Wangi Cianjur 5kg', 3, 62000.00, 72000.00, 30, 'aktif'),
-(6, NULL, 'Minyak Goreng Filma Refill 2L', 3, 28500.00, 32500.00, 25, 'aktif'),
-(7, NULL, 'Gula Pasir Rose Brand 1kg', 3, 13500.00, 16000.00, 60, 'aktif'),
-(8, NULL, 'Mouse Wireless Logitech M170', 4, 110000.00, 135000.00, 12, 'aktif'),
-(9, NULL, 'Kabel Data Type-C Robot 1m', 4, 12000.00, 20000.00, 4, 'aktif'), -- Menipis status
-(10, NULL, 'Buku Tulis Kiky A5 38 Lembar', 5, 2500.00, 3500.00, 0, 'aktif'); -- Habis status
+INSERT INTO produk (id, foto, barcode, nama_produk, id_kategori, harga_beli, harga_jual, stok, status) VALUES
+(1, NULL, '8998866200223', 'Indomie Goreng Rasa Ayam Panggang', 1, 2600.00, 3100.00, 150, 'aktif'),
+(2, NULL, '8992761001004', 'Chitato Sapi Panggang 68g', 1, 9500.00, 11500.00, 45, 'aktif'),
+(3, NULL, '5449000216677', 'Coca-Cola Zero Sugar 390ml', 2, 4800.00, 6000.00, 80, 'aktif'),
+(4, NULL, '8991002101530', 'Teh Botol Sosro Kotak 250ml', 2, 2700.00, 3500.00, 120, 'aktif'),
+(5, NULL, '8997208110547', 'Beras Pandan Wangi Cianjur 5kg', 3, 62000.00, 72000.00, 30, 'aktif'),
+(6, NULL, '8992696404178', 'Minyak Goreng Filma Refill 2L', 3, 28500.00, 32500.00, 25, 'aktif'),
+(7, NULL, '8992817210022', 'Gula Pasir Rose Brand 1kg', 3, 13500.00, 16000.00, 60, 'aktif'),
+(8, NULL, '097855117496', 'Mouse Wireless Logitech M170', 4, 110000.00, 135000.00, 12, 'aktif'),
+(9, NULL, '6971253480029', 'Kabel Data Type-C Robot 1m', 4, 12000.00, 20000.00, 4, 'aktif'), -- Menipis status
+(10, NULL, '8993245100033', 'Buku Tulis Kiky A5 38 Lembar', 5, 2500.00, 3500.00, 0, 'aktif'); -- Habis status
 
 -- SEED EXPENSES
 INSERT INTO pengeluaran (id, nama_pengeluaran, kategori, nominal, tanggal, keterangan) VALUES

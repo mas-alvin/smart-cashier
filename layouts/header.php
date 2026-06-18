@@ -65,6 +65,9 @@ $logo_toko = $toko_info['logo'] ?? '';
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
+    <!-- HTML5 QR Code Scanner Library for Barcode scanning -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
     <!-- Tema Kustomisasi Tailwind v4 & Global CSS -->
     <style type="text/tailwindcss">
         @theme {

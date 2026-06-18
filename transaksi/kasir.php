@@ -116,6 +116,22 @@ if (isset($_POST['action']) && $_POST['action'] === 'checkout') {
                 <h1 class="text-xl font-bold text-slate-800 tracking-tight">Kasir Penjualan</h1>
             </div>
             
+            <!-- Barcode Scanner Input & Camera Button -->
+            <div class="flex gap-3 bg-indigo-50/50 p-3.5 rounded-2xl border border-indigo-100/50 items-center">
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-indigo-500">
+                        <i data-lucide="barcode" class="w-4 h-4"></i>
+                    </div>
+                    <input type="text" id="barcode-scanner-input" placeholder="Scan barcode barang di sini... (atau ketik lalu tekan Enter)"
+                        class="w-full pl-10 pr-4 py-2.5 bg-white border border-indigo-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-indigo-300 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all">
+                </div>
+                <button type="button" onclick="openCameraScanner()" 
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md shadow-indigo-100 flex items-center space-x-2 transition-all cursor-pointer h-10">
+                    <i data-lucide="camera" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">Scan Kamera</span>
+                </button>
+            </div>
+            
             <!-- Pencarian & Kategori Filter -->
             <div class="flex flex-col md:flex-row gap-3">
                 <div class="relative flex-1">
@@ -192,7 +208,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'checkout') {
                                         'id' => $prod['id'],
                                         'nama' => $prod['nama_produk'],
                                         'harga' => (float)$prod['harga_jual'],
-                                        'stok' => (int)$prod['stok']
+                                        'stok' => (int)$prod['stok'],
+                                        'barcode' => $prod['barcode']
                                     ])) ?>)"
                                         class="bg-indigo-600 hover:bg-indigo-700 text-white p-1.5 rounded-lg transition-colors cursor-pointer shadow-sm shadow-indigo-100 flex items-center justify-center">
                                         <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -260,8 +277,9 @@ if (isset($_POST['action']) && $_POST['action'] === 'checkout') {
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none font-bold text-xs text-slate-400">
                             Rp
                         </div>
-                        <input type="number" name="bayar" id="bayar-input" required min="0" placeholder="0"
+                        <input type="text" id="bayar-input-display" required placeholder="0"
                             class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all">
+                        <input type="hidden" name="bayar" id="bayar-input" value="0">
                     </div>
                 </div>
 
@@ -282,7 +300,24 @@ if (isset($_POST['action']) && $_POST['action'] === 'checkout') {
     </div>
 </div>
 
+<?php
+// Load all products in JS memory for quick barcode lookup
+$prod_lookup_query = mysqli_query($conn, "SELECT id, nama_produk, harga_jual, stok, barcode FROM produk WHERE status = 'aktif'");
+$prod_lookup_list = [];
+while ($row = mysqli_fetch_assoc($prod_lookup_query)) {
+    $prod_lookup_list[] = [
+        'id' => (int)$row['id'],
+        'nama' => $row['nama_produk'],
+        'harga' => (float)$row['harga_jual'],
+        'stok' => (int)$row['stok'],
+        'barcode' => $row['barcode']
+    ];
+}
+?>
 <script>
+// Load all products in JS memory for quick barcode lookup
+const productsList = <?= json_encode($prod_lookup_list) ?>;
+
 // State Keranjang POS (Local Array Memory)
 let cart = [];
 
@@ -367,6 +402,9 @@ function updateCartUI() {
         document.getElementById('total-harga-text').innerText = 'Rp 0';
         document.getElementById('total-harga-input').value = 0;
         document.getElementById('kembalian-text').innerText = 'Rp 0';
+        if (document.getElementById('bayar-input-display')) {
+            document.getElementById('bayar-input-display').value = '';
+        }
         document.getElementById('bayar-input').value = '';
         toggleCheckoutButton(false);
         return;
@@ -469,17 +507,22 @@ function formatRupiah(number) {
 }
 
 // Event Listeners: Real-Time Input Uang Cash & Form Submit
-document.getElementById('bayar-input').addEventListener('input', hitungKembalian);
+// Formatting and event handling for display cash input
+document.getElementById('bayar-input-display').addEventListener('input', function(e) {
+    let rawVal = this.value.replace(/[^0-9]/g, '');
+    document.getElementById('bayar-input').value = rawVal || '0';
+    if (rawVal) {
+        this.value = parseInt(rawVal, 10).toLocaleString('id-ID');
+    } else {
+        this.value = '';
+    }
+    hitungKembalian();
+});
 
 document.getElementById('checkout-form').addEventListener('submit', function(e) {
     if (cart.length === 0) {
         e.preventDefault();
-        Swal.fire({
-            icon: 'error',
-            title: 'Transaksi Gagal',
-            text: 'Keranjang belanja Anda kosong!',
-            confirmButtonColor: '#4f46e5'
-        });
+        showTailwindToast('error', 'Transaksi Gagal', 'Keranjang belanja Anda kosong!');
     }
 });
 
@@ -506,6 +549,230 @@ function filterProduk() {
         }
     });
 }
+
+// ================= Barcode Scanner JS =================
+
+// Scan barcode logic
+function scanBarcode(barcodeValue) {
+    barcodeValue = barcodeValue.trim();
+    if (!barcodeValue) return false;
+    
+    const product = productsList.find(p => p.barcode === barcodeValue);
+    if (product) {
+        if (product.stok > 0) {
+            addToCart(product);
+            playScanSound();
+            showTailwindToast('success', 'Berhasil', `Ditambahkan: ${product.nama}`);
+            return true;
+        } else {
+            showTailwindToast('warning', 'Stok Habis', `Produk "${product.nama}" saat ini habis.`);
+            return false;
+        }
+    } else {
+        showTailwindToast('error', 'Tidak Ditemukan', `Barcode "${barcodeValue}" tidak terdaftar di sistem.`);
+        return false;
+    }
+}
+
+// Play Audio file when scan is successful
+function playScanSound() {
+    try {
+        const audio = new Audio('../assets/audio/public_sounds_success.mp3');
+        audio.volume = 0.55;
+        audio.play();
+    } catch (e) {
+        console.log("Audio playback failed or blocked", e);
+    }
+}
+
+// Custom Tailwind Toast Notification
+function showTailwindToast(type, title, message) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    
+    let bgColor = 'bg-emerald-500';
+    let borderColor = 'border-emerald-600';
+    let iconName = 'check-circle';
+    
+    if (type === 'warning') {
+        bgColor = 'bg-amber-500';
+        borderColor = 'border-amber-600';
+        iconName = 'alert-triangle';
+    } else if (type === 'error') {
+        bgColor = 'bg-rose-500';
+        borderColor = 'border-rose-600';
+        iconName = 'x-circle';
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `flex items-start gap-3 p-4 text-white ${bgColor} border-b-4 ${borderColor} rounded-xl shadow-lg transform translate-x-full opacity-0 transition-all duration-300 pointer-events-auto w-80 md:w-96`;
+    
+    toast.innerHTML = `
+        <div class="flex-shrink-0 mt-0.5">
+            <i data-lucide="${iconName}" class="w-5 h-5"></i>
+        </div>
+        <div class="flex-1">
+            <h4 class="text-xs font-bold">${title}</h4>
+            <p class="text-[10px] text-white/95 mt-0.5">${message}</p>
+        </div>
+        <button type="button" class="flex-shrink-0 text-white/80 hover:text-white transition-colors ml-2 cursor-pointer" onclick="this.parentElement.remove()">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    `;
+    
+    container.appendChild(toast);
+    
+    if (window.lucide) {
+        lucide.createIcons({
+            attrs: {
+                class: ['lucide']
+            },
+            nameAttr: 'data-lucide',
+            root: toast
+        });
+    }
+    
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full', 'opacity-0');
+    }, 50);
+    
+    setTimeout(() => {
+        toast.classList.add('translate-x-full', 'opacity-0');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 4000);
+}
+
+// Auto-focus barcode input on load
+window.addEventListener('DOMContentLoaded', () => {
+    const scanInput = document.getElementById('barcode-scanner-input');
+    if (scanInput) scanInput.focus();
+});
+
+// Real-time automatic barcode scanner listener (no enter key needed)
+let scanTimeout = null;
+
+document.getElementById('barcode-scanner-input').addEventListener('input', function(e) {
+    const val = this.value.trim();
+    if (!val) return;
+    
+    // 1. Instant match check
+    const matched = productsList.some(p => p.barcode === val);
+    if (matched) {
+        scanBarcode(val);
+        this.value = '';
+        if (scanTimeout) clearTimeout(scanTimeout);
+        return;
+    }
+    
+    // 2. Debounce fallback (for manually typing barcode digits)
+    if (scanTimeout) clearTimeout(scanTimeout);
+    scanTimeout = setTimeout(() => {
+        const currentVal = this.value.trim();
+        if (currentVal.length >= 6) {
+            scanBarcode(currentVal);
+            this.value = '';
+        }
+    }, 400);
+});
+
+document.getElementById('barcode-scanner-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = this.value.trim();
+        if (val) {
+            scanBarcode(val);
+            this.value = '';
+        }
+        if (scanTimeout) clearTimeout(scanTimeout);
+    }
+});
+
+// Camera Scanner integration
+let html5QrCodeScanner = null;
+
+function openCameraScanner() {
+    const modal = document.getElementById('modal-camera-scanner');
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modal.querySelector('.transform').classList.remove('scale-95');
+    }, 50);
+    
+    html5QrCodeScanner = new Html5Qrcode("camera-reader");
+    
+    const config = { 
+        fps: 10, 
+        qrbox: { width: 250, height: 150 },
+        aspectRatio: 1.777778
+    };
+    
+    html5QrCodeScanner.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText, decodedResult) => {
+            const success = scanBarcode(decodedText);
+            if (success) {
+                closeCameraScanner();
+            }
+        },
+        (errorMessage) => {
+            // Ignore frame scan errors
+        }
+    ).catch(err => {
+        showTailwindToast('error', 'Kamera Gagal', 'Tidak dapat mengakses kamera: ' + err);
+        closeCameraScanner();
+    });
+}
+
+function closeCameraScanner() {
+    const modal = document.getElementById('modal-camera-scanner');
+    modal.classList.add('opacity-0');
+    modal.querySelector('.transform').classList.add('scale-95');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+    
+    if (html5QrCodeScanner) {
+        html5QrCodeScanner.stop().then(() => {
+            html5QrCodeScanner = null;
+        }).catch(err => {
+            console.error("Gagal menghentikan kamera", err);
+        });
+    }
+    
+    setTimeout(() => {
+        document.getElementById('barcode-scanner-input').focus();
+    }, 350);
+}
 </script>
+
+<!-- Container untuk Notifikasi Tailwind Custom -->
+<div id="toast-container" class="fixed top-4 right-4 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full px-4 md:px-0"></div>
+
+<!-- Modal Kamera Scanner -->
+<div id="modal-camera-scanner" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl p-6 transform scale-95 transition-all duration-300">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+            <div class="flex items-center space-x-2 text-indigo-600">
+                <i data-lucide="camera" class="w-5 h-5"></i>
+                <h3 class="text-sm font-bold text-slate-800">Scan Barcode via Kamera</h3>
+            </div>
+            <button type="button" onclick="closeCameraScanner()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-950 relative aspect-video flex items-center justify-center">
+                <div id="camera-reader" class="w-full h-full"></div>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl text-[10px] text-slate-500 font-medium flex items-start space-x-2">
+                <i data-lucide="info" class="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5"></i>
+                <span>Arahkan barcode produk ke kamera. Pastikan pencahayaan cukup dan barcode terlihat jelas di dalam kamera.</span>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php include '../layouts/footer.php'; ?>

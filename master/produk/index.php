@@ -36,6 +36,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'tambah') {
     $harga_jual = (float)$_POST['harga_jual'];
     $stok = (int)$_POST['stok'];
     $status = trim(mysqli_real_escape_string($conn, $_POST['status']));
+    $barcode = trim(mysqli_real_escape_string($conn, $_POST['barcode']));
+    $barcode_val = empty($barcode) ? "NULL" : "'$barcode'";
     
     // Handle File Upload
     $foto_name = null;
@@ -54,8 +56,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'tambah') {
     }
     
     if (!empty($nama_produk) && $id_kategori > 0 && $harga_beli >= 0 && $harga_jual >= 0) {
-        $query = "INSERT INTO produk (foto, nama_produk, id_kategori, harga_beli, harga_jual, stok, status) 
-                  VALUES (" . ($foto_name ? "'$foto_name'" : "NULL") . ", '$nama_produk', $id_kategori, $harga_beli, $harga_jual, $stok, '$status')";
+        $query = "INSERT INTO produk (foto, nama_produk, id_kategori, harga_beli, harga_jual, stok, status, barcode) 
+                  VALUES (" . ($foto_name ? "'$foto_name'" : "NULL") . ", '$nama_produk', $id_kategori, $harga_beli, $harga_jual, $stok, '$status', $barcode_val)";
         if (mysqli_query($conn, $query)) {
             set_flash('success', 'Berhasil', 'Produk baru berhasil ditambahkan!');
         } else {
@@ -77,6 +79,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'edit') {
     $harga_jual = (float)$_POST['harga_jual'];
     $stok = (int)$_POST['stok'];
     $status = trim(mysqli_real_escape_string($conn, $_POST['status']));
+    $barcode = trim(mysqli_real_escape_string($conn, $_POST['barcode']));
+    $barcode_val = empty($barcode) ? "NULL" : "'$barcode'";
     
     if ($id > 0 && !empty($nama_produk) && $id_kategori > 0) {
         // Ambil data produk lama untuk mendeteksi foto lama
@@ -109,7 +113,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'edit') {
                     harga_jual = $harga_jual, 
                     stok = $stok, 
                     status = '$status', 
-                    foto = " . ($foto_name ? "'$foto_name'" : "NULL") . " 
+                    foto = " . ($foto_name ? "'$foto_name'" : "NULL") . ", 
+                    barcode = $barcode_val
                   WHERE id = $id";
                   
         if (mysqli_query($conn, $query)) {
@@ -222,7 +227,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'hapus') {
                                     <?php endif; ?>
                                 </div>
                             </td>
-                            <td class="py-3 px-4 font-bold text-slate-800"><?= htmlspecialchars($row['nama_produk']) ?></td>
+                             <td class="py-3 px-4 font-bold text-slate-800">
+                                 <div><?= htmlspecialchars($row['nama_produk']) ?></div>
+                                 <?php if (!empty($row['barcode'])): ?>
+                                     <div class="text-[10px] text-slate-400 font-mono mt-0.5 flex items-center space-x-1 font-normal">
+                                         <i data-lucide="barcode" class="w-3.5 h-3.5"></i>
+                                         <span><?= htmlspecialchars($row['barcode']) ?></span>
+                                     </div>
+                                 <?php endif; ?>
+                             </td>
                             <td class="py-3 px-4 font-medium text-indigo-600 bg-indigo-50/20 rounded-md px-2 py-1 inline-block mt-3"><?= htmlspecialchars($row['nama_kategori']) ?></td>
                             <td class="py-3 px-4 text-right font-medium"><?= rupiah($row['harga_beli']) ?></td>
                             <td class="py-3 px-4 text-right font-bold text-slate-700"><?= rupiah($row['harga_jual']) ?></td>
@@ -281,6 +294,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'hapus') {
             <div>
                 <label for="nama_produk_tambah" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Nama Produk</label>
                 <input type="text" name="nama_produk" id="nama_produk_tambah" required placeholder="Contoh: Coca-Cola 330ml"
+                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all">
+            </div>
+
+            <div>
+                <label for="barcode_tambah" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Kode Barcode / UPC <span class="text-[10px] text-slate-400 lowercase font-normal italic">(opsional)</span></label>
+                <input type="text" name="barcode" id="barcode_tambah" placeholder="Contoh: 8992761001004"
                     class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all">
             </div>
 
@@ -356,6 +375,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'hapus') {
             <div>
                 <label for="edit-nama" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Nama Produk</label>
                 <input type="text" name="nama_produk" id="edit-nama" required placeholder="Nama produk"
+                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all">
+            </div>
+
+            <div>
+                <label for="edit-barcode" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Kode Barcode / UPC <span class="text-[10px] text-slate-400 lowercase font-normal italic">(opsional)</span></label>
+                <input type="text" name="barcode" id="edit-barcode" placeholder="Contoh: 8992761001004"
                     class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all">
             </div>
 
@@ -475,6 +500,7 @@ function closeModal(id) {
 function openModalEdit(data) {
     document.getElementById('edit-id').value = data.id;
     document.getElementById('edit-nama').value = data.nama_produk;
+    document.getElementById('edit-barcode').value = data.barcode || '';
     document.getElementById('edit-kategori').value = data.id_kategori;
     document.getElementById('edit-harga-beli').value = data.harga_beli;
     document.getElementById('edit-harga-jual').value = data.harga_jual;
