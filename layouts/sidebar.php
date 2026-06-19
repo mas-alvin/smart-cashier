@@ -40,9 +40,7 @@ $user_name = $_SESSION['nama_lengkap'] ?? 'User';
             <?php if (!empty($logo_toko) && file_exists(dirname(__DIR__) . '/assets/uploads/' . $logo_toko)): ?>
                 <img src="/assets/uploads/<?= $logo_toko ?>" alt="Logo" class="w-10 h-10 rounded-xl object-cover shadow-md shadow-indigo-100">
             <?php else: ?>
-                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-100">
-                    <i data-lucide="store" class="w-5 h-5"></i>
-                </div>
+                <img src="https://ppdb.smkalmujtamak.sch.id/logo-amt.webp" alt="Logo" class="w-10 h-10 rounded-xl object-cover shadow-md shadow-indigo-100">
             <?php endif; ?>
             <div class="overflow-hidden">
                 <?php

@@ -377,7 +377,7 @@ function addToCart(produk) {
                 icon: 'warning',
                 title: 'Stok Terbatas',
                 text: `Stok produk "${produk.nama}" hanya tersedia ${produk.stok} pcs.`,
-                confirmButtonColor: '#4f46e5'
+                confirmButtonColor: '#059669'
             });
         }
     } else {
@@ -408,7 +408,7 @@ function updateQty(id, delta) {
                 icon: 'warning',
                 title: 'Stok Terbatas',
                 text: `Stok produk "${item.nama}" hanya tersedia ${item.stok} pcs.`,
-                confirmButtonColor: '#4f46e5'
+                confirmButtonColor: '#059669'
             });
         } else {
             item.qty = newQty;

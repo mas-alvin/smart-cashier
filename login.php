@@ -2,8 +2,10 @@
 // login.php
 // Halaman login untuk masuk ke sistem SMARTPOS UMKM
 
-// Panggil header layout (sudah include db & helpers)
-include 'layouts/header.php';
+// Masukkan file database dan helper secara manual sebelum HTML output
+$base_path = __DIR__;
+require_once $base_path . '/config/database.php';
+require_once $base_path . '/helpers/format.php';
 
 // Proses Logout jika ada parameter ?action=logout
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
@@ -59,6 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+// Panggil header layout (hanya untuk merender HTML head, dsb.)
+include 'layouts/header.php';
 ?>
 
 <div class="min-h-screen w-full flex items-center justify-center p-6 bg-slate-50 relative overflow-hidden">
@@ -73,9 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if (!empty($logo_toko) && file_exists(__DIR__ . '/assets/uploads/' . $logo_toko)): ?>
                     <img src="/assets/uploads/<?= $logo_toko ?>" alt="Logo" class="w-14 h-14 rounded-2xl object-cover shadow-lg shadow-indigo-100 mb-4">
                 <?php else: ?>
-                    <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100 mb-4">
-                        <i data-lucide="store" class="w-7 h-7"></i>
-                    </div>
+                    <img src="https://ppdb.smkalmujtamak.sch.id/logo-amt.webp" alt="Logo" class="w-14 h-14 rounded-2xl object-cover shadow-lg shadow-indigo-100 mb-4">
                 <?php endif; ?>
                 <h1 class="text-2xl font-bold text-slate-800 tracking-tight"><?= htmlspecialchars($nama_toko) ?></h1>
                 <p class="text-sm text-slate-400 mt-1">Silakan masuk ke akun Anda</p>

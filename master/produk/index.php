@@ -221,7 +221,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'hapus') {
                             <td class="py-3 px-4">
                                 <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-300">
                                     <?php if (!empty($row['foto']) && file_exists($upload_dir . $row['foto'])): ?>
-                                        <img src="/assets/uploads/<?= $row['foto'] ?>" alt="Foto" class="w-full h-full rounded-lg object-cover">
+                                        <img src="../../assets/uploads/<?= $row['foto'] ?>" alt="Foto" class="w-full h-full rounded-lg object-cover">
                                     <?php else: ?>
                                         <i data-lucide="image" class="w-5 h-5"></i>
                                     <?php endif; ?>

@@ -13,9 +13,7 @@
         <?php if (!empty($logo_toko) && file_exists(dirname(__DIR__) . '/assets/uploads/' . $logo_toko)): ?>
             <img src="/assets/uploads/<?= $logo_toko ?>" alt="Logo" class="w-8 h-8 rounded-lg object-cover">
         <?php else: ?>
-            <div class="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
-                <i data-lucide="store" class="w-4 h-4"></i>
-            </div>
+            <img src="https://ppdb.smkalmujtamak.sch.id/logo-amt.webp" alt="Logo" class="w-8 h-8 rounded-lg object-cover shadow-sm">
         <?php endif; ?>
         <div>
             <h2 class="font-bold text-slate-800 leading-tight text-sm"><?= htmlspecialchars($nama_toko) ?></h2>

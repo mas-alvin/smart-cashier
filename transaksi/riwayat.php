@@ -319,7 +319,7 @@ function showDetails(id) {
                 icon: 'error',
                 title: 'Gagal',
                 text: res.message || 'Gagal mengambil detail transaksi.',
-                confirmButtonColor: '#4f46e5'
+                confirmButtonColor: '#059669'
             });
         }
     }, 'json');

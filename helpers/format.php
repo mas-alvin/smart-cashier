@@ -82,7 +82,7 @@ function show_flash() {
                 icon: '{$tipe}',
                 title: '{$judul}',
                 text: '{$pesan}',
-                confirmButtonColor: '#4f46e5'
+                confirmButtonColor: '#059669'
             });
         </script>
         ";

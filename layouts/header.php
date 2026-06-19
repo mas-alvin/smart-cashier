@@ -27,6 +27,7 @@ $logo_toko = $toko_info['logo'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($nama_toko) ?> - Kelola Toko Lebih Mudah</title>
+    <link rel="shortcut icon" href="https://ppdb.smkalmujtamak.sch.id/logo-amt.webp" type="image/webp">
     
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -72,10 +73,22 @@ $logo_toko = $toko_info['logo'] ?? '';
     <style type="text/tailwindcss">
         @theme {
             --font-sans: 'Inter', sans-serif;
-            --color-primary: #4f46e5; /* Indigo 600 */
+            --color-primary: #059669; /* Emerald 600 */
             --color-success: #059669; /* Emerald 600 */
             --color-danger: #dc2626;  /* Red 600 */
             --color-warning: #d97706; /* Amber 600 */
+            
+            --color-indigo-50: #ecfdf5;
+            --color-indigo-100: #d1fae5;
+            --color-indigo-200: #a7f3d0;
+            --color-indigo-300: #6ee7b7;
+            --color-indigo-400: #34d399;
+            --color-indigo-500: #10b981;
+            --color-indigo-600: #059669;
+            --color-indigo-700: #047857;
+            --color-indigo-800: #065f46;
+            --color-indigo-900: #064e3b;
+            --color-indigo-950: #022c22;
         }
         
         /* Modifikasi custom scrollbar */
@@ -104,8 +117,8 @@ $logo_toko = $toko_info['logo'] ?? '';
             transition: all 0.2s;
         }
         .dt-search input:focus {
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+            border-color: #059669;
+            box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.1);
         }
         
         /* Style override untuk DataTables Button export */
