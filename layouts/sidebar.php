@@ -37,7 +37,7 @@ $user_name = $_SESSION['nama_lengkap'] ?? 'User';
     <div class="flex flex-col h-full overflow-y-auto">
         <!-- Logo Section -->
         <div class="p-6 border-b border-slate-100 flex items-center space-x-3">
-            <?php if (!empty($logo_toko) && file_exists(dirname(__DIR__) . '/assets/uploads/' . $logo_toko)): ?>
+            <?php if (!empty($logo_toko) && file_exists(dirname(__DIR__) . '../assets/uploads/' . $logo_toko)): ?>
                 <img src="/assets/uploads/<?= $logo_toko ?>" alt="Logo" class="w-10 h-10 rounded-xl object-cover shadow-md shadow-indigo-100">
             <?php else: ?>
                 <img src="https://ppdb.smkalmujtamak.sch.id/logo-amt.webp" alt="Logo" class="w-10 h-10 rounded-xl object-cover shadow-md shadow-indigo-100">

@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm text-center flex flex-col items-center justify-center space-y-4">
                 <!-- Visual Mockup Logo Toko -->
                 <?php if (!empty($profile['logo']) && file_exists(dirname(__DIR__) . '/assets/uploads/' . $profile['logo'])): ?>
-                    <img src="/assets/uploads/<?= $profile['logo'] ?>" alt="Logo Toko" class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-md">
+                    <img src="../assets/uploads/<?= $profile['logo'] ?>" alt="Logo Toko" class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-md">
                 <?php else: ?>
                     <div class="w-20 h-20 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xl shadow-inner">
                         <?= strtoupper(substr($profile['nama_toko'], 0, 2)) ?>

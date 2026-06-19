@@ -10,7 +10,7 @@
         <button type="button" onclick="toggleSidebarDrawer()" class="lg:hidden p-2 hover:bg-slate-100 rounded-lg text-slate-500 mr-1 cursor-pointer">
             <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
-        <?php if (!empty($logo_toko) && file_exists(dirname(__DIR__) . '/assets/uploads/' . $logo_toko)): ?>
+        <?php if (!empty($logo_toko) && file_exists(dirname(__DIR__) . '../assets/uploads/' . $logo_toko)): ?>
             <img src="/assets/uploads/<?= $logo_toko ?>" alt="Logo" class="w-8 h-8 rounded-lg object-cover">
         <?php else: ?>
             <img src="https://ppdb.smkalmujtamak.sch.id/logo-amt.webp" alt="Logo" class="w-8 h-8 rounded-lg object-cover shadow-sm">
