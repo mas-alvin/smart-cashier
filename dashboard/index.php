@@ -66,7 +66,7 @@ for ($i = 6; $i >= 0; $i--) {
         </div>
         
         <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'kasir'): ?>
-        <a href="/smart-cashier/transaksi/kasir.php" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-5 py-3 rounded-xl shadow-md shadow-indigo-100 flex items-center space-x-2 transition-all">
+        <a href="/transaksi/kasir.php" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-5 py-3 rounded-xl shadow-md shadow-indigo-100 flex items-center space-x-2 transition-all">
             <i data-lucide="plus-circle" class="w-4 h-4"></i>
             <span>Transaksi Baru</span>
         </a>
@@ -209,7 +209,7 @@ for ($i = 6; $i >= 0; $i--) {
             </div>
             
             <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'owner'): ?>
-            <a href="/smart-cashier/laporan/produk_terlaris.php" class="text-center block text-xs font-semibold text-indigo-600 hover:text-indigo-700 mt-4 pt-3 border-t border-slate-100">
+            <a href="/laporan/produk_terlaris.php" class="text-center block text-xs font-semibold text-indigo-600 hover:text-indigo-700 mt-4 pt-3 border-t border-slate-100">
                 Lihat Selengkapnya &rarr;
             </a>
             <?php endif; ?>
@@ -224,7 +224,7 @@ for ($i = 6; $i >= 0; $i--) {
                 <p class="text-[10px] text-slate-400">Daftar transaksi kasir yang baru saja dilakukan</p>
             </div>
             <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'kasir'): ?>
-            <a href="/smart-cashier/transaksi/riwayat.php" class="text-xs font-semibold text-indigo-600 hover:text-indigo-700">Lihat Semua</a>
+            <a href="/transaksi/riwayat.php" class="text-xs font-semibold text-indigo-600 hover:text-indigo-700">Lihat Semua</a>
             <?php endif; ?>
         </div>
         

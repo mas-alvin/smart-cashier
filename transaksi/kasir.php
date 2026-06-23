@@ -9,7 +9,7 @@ include '../layouts/navbar.php';
 // Validasi Hak Akses: Admin dan Kasir
 if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'kasir') {
     set_flash('error', 'Akses Ditolak', 'Halaman ini hanya dapat diakses oleh Administrator atau Kasir!');
-    echo "<script>window.location.href='/smart-cashier/dashboard/index.php';</script>";
+    echo "<script>window.location.href='/dashboard/index.php';</script>";
     exit();
 }
 
@@ -130,7 +130,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'checkout') {
         <div class="space-y-4 flex-shrink-0">
             <div>
                 <nav class="flex text-xs text-slate-400 space-x-2 mb-1 font-medium">
-                    <a href="/smart-cashier/dashboard/index.php" class="hover:text-slate-600">Dashboard</a>
+                    <a href="/dashboard/index.php" class="hover:text-slate-600">Dashboard</a>
                     <span>/</span>
                     <span class="text-indigo-600">Kasir POS</span>
                 </nav>

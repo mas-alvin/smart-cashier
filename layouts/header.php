@@ -11,15 +11,16 @@ require_once $base_path . '/helpers/format.php';
 // Kecuali sedang berada di halaman login.php itu sendiri
 $current_page = basename($_SERVER['PHP_SELF']);
 if ($current_page !== 'login.php' && !isset($_SESSION['user_id'])) {
-    header("Location: /smart-cashier/login.php");
+    header("Location: /login.php");
     exit();
 }
 
-// Dapatkan nama toko & logo secara dinamis dari database untuk digunakan secara global
-$toko_query = mysqli_query($conn, "SELECT nama_toko, logo FROM profil_toko LIMIT 1");
+// Dapatkan nama toko, logo, & slogan secara dinamis dari database untuk digunakan secara global
+$toko_query = mysqli_query($conn, "SELECT nama_toko, logo, slogan FROM profil_toko LIMIT 1");
 $toko_info = mysqli_fetch_assoc($toko_query);
 $nama_toko = $toko_info['nama_toko'] ?? 'SMARTPOS UMKM';
 $logo_toko = $toko_info['logo'] ?? '';
+$slogan_toko = $toko_info['slogan'] ?? 'Sistem Kasir Pintar Digital';
 ?>
 <!DOCTYPE html>
 <html lang="id">

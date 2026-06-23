@@ -9,7 +9,7 @@ include '../layouts/navbar.php';
 // Validasi Hak Akses: Hanya Admin
 if ($_SESSION['role'] !== 'admin') {
     set_flash('error', 'Akses Ditolak', 'Halaman ini hanya dapat diakses oleh Administrator!');
-    echo "<script>window.location.href='/smart-cashier/dashboard/index.php';</script>";
+    echo "<script>window.location.href='/dashboard/index.php';</script>";
     exit();
 }
 
@@ -27,9 +27,10 @@ if (!$profile) {
 // --- PROSES UPDATE PROFIL TOKO ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_profile') {
     $nama_toko = trim(mysqli_real_escape_string($conn, $_POST['nama_toko']));
-    $nomor_hp = trim(mysqli_real_escape_string($conn, $_POST['nomor_hp']));
-    $email = trim(mysqli_real_escape_string($conn, $_POST['email']));
-    $alamat = trim(mysqli_real_escape_string($conn, $_POST['alamat']));
+    $nomor_hp  = trim(mysqli_real_escape_string($conn, $_POST['nomor_hp']));
+    $email     = trim(mysqli_real_escape_string($conn, $_POST['email']));
+    $alamat    = trim(mysqli_real_escape_string($conn, $_POST['alamat']));
+    $slogan    = trim(mysqli_real_escape_string($conn, $_POST['slogan'] ?? 'Sistem Kasir Pintar Digital'));
     
     if (!empty($nama_toko) && !empty($nomor_hp)) {
         // Handle File Upload Logo
@@ -40,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
 
         if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-            $file_tmp = $_FILES['logo']['tmp_name'];
+            $file_tmp  = $_FILES['logo']['tmp_name'];
             $file_name = $_FILES['logo']['name'];
-            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+            $file_ext  = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
             
             $allowed_ext = ['jpg', 'jpeg', 'png', 'webp'];
             if (in_array($file_ext, $allowed_ext)) {
@@ -50,7 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 if (!empty($logo_name) && file_exists($upload_dir . $logo_name)) {
                     unlink($upload_dir . $logo_name);
                 }
-                
                 $logo_name = 'logo_' . time() . '_' . uniqid() . '.' . $file_ext;
                 move_uploaded_file($file_tmp, $upload_dir . $logo_name);
             }
@@ -58,10 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
         $update_query = "UPDATE profil_toko SET 
                             nama_toko = '$nama_toko', 
-                            nomor_hp = '$nomor_hp', 
-                            email = '$email', 
-                            alamat = '$alamat',
-                            logo = " . ($logo_name ? "'$logo_name'" : "NULL") . " 
+                            nomor_hp  = '$nomor_hp', 
+                            email     = '$email', 
+                            alamat    = '$alamat',
+                            slogan    = '$slogan',
+                            logo      = " . ($logo_name ? "'$logo_name'" : "NULL") . " 
                          WHERE id = {$profile['id']}";
         if (mysqli_query($conn, $update_query)) {
             set_flash('success', 'Berhasil Diperbarui', 'Profil identitas toko berhasil disimpan!');
@@ -83,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
         <div>
             <nav class="flex text-xs text-slate-400 space-x-2 mb-2 font-medium">
-                <a href="/smart-cashier/dashboard/index.php" class="hover:text-slate-600">Dashboard</a>
+                <a href="/dashboard/index.php" class="hover:text-slate-600">Dashboard</a>
                 <span>/</span>
                 <span class="text-slate-600">Pengaturan</span>
                 <span>/</span>
@@ -101,11 +102,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm text-center flex flex-col items-center justify-center space-y-4">
                 <!-- Visual Mockup Logo Toko -->
                 <?php if (!empty($profile['logo']) && file_exists(dirname(__DIR__) . '/assets/uploads/' . $profile['logo'])): ?>
-                    <img src="../assets/uploads/<?= $profile['logo'] ?>" alt="Logo Toko" class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-md">
+                    <img src="/assets/uploads/<?= htmlspecialchars($profile['logo']) ?>" alt="Logo Toko" class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-md">
                 <?php else: ?>
-                    <div class="w-20 h-20 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xl shadow-inner">
-                        <?= strtoupper(substr($profile['nama_toko'], 0, 2)) ?>
-                    </div>
+                    <img src="https://ppdb.smkalmujtamak.sch.id/logo-amt.webp" alt="Logo Toko" class="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-md">
                 <?php endif; ?>
                 <div>
                     <h3 class="font-bold text-slate-800 text-sm mt-2"><?= htmlspecialchars($profile['nama_toko']) ?></h3>
@@ -141,6 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                             <input type="text" name="nomor_hp" id="nomor_hp" required value="<?= htmlspecialchars($profile['nomor_hp']) ?>" placeholder="Masukkan nomor telepon"
                                 class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all">
                         </div>
+                    </div>
+
+                    <div>
+                        <label for="slogan" class="block font-bold text-slate-500 uppercase tracking-wider mb-2">Slogan / Tagline <span class="text-[10px] text-slate-400 lowercase font-normal italic normal-case">(tampil di bawah nama toko pada sidebar)</span></label>
+                        <input type="text" name="slogan" id="slogan" value="<?= htmlspecialchars($profile['slogan'] ?? 'Sistem Kasir Pintar Digital') ?>" placeholder="Contoh: Sistem Kasir Pintar Digital"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all">
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -56,4 +56,10 @@ if (mysqli_num_rows($table_check) == 0) {
 
 // Set charset ke utf8mb4
 mysqli_set_charset($conn, 'utf8mb4');
+
+// Auto-migrate: Add slogan column to profil_toko if not exists
+$check_col = mysqli_query($conn, "SHOW COLUMNS FROM profil_toko LIKE 'slogan'");
+if (mysqli_num_rows($check_col) == 0) {
+    mysqli_query($conn, "ALTER TABLE profil_toko ADD COLUMN slogan VARCHAR(255) DEFAULT 'Sistem Kasir Pintar Digital'");
+}
 ?>

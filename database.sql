@@ -1,36 +1,50 @@
 -- Database creation and schema setup for SMARTPOS UMKM
-CREATE DATABASE IF NOT EXISTS smart_cashier;
+-- Direkt ekspor/impor ke MySQL
+
+CREATE DATABASE IF NOT EXISTS smart_cashier
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
 USE smart_cashier;
 
 -- 1. Pengguna (Users)
-CREATE TABLE IF NOT EXISTS pengguna (
+DROP TABLE IF EXISTS penjualan_detail;
+DROP TABLE IF EXISTS retur;
+DROP TABLE IF EXISTS penjualan;
+DROP TABLE IF EXISTS produk;
+DROP TABLE IF EXISTS pengeluaran;
+DROP TABLE IF EXISTS supplier;
+DROP TABLE IF EXISTS kategori;
+DROP TABLE IF EXISTS pengguna;
+DROP TABLE IF EXISTS profil_toko;
+
+CREATE TABLE pengguna (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nama_lengkap VARCHAR(100) NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('admin', 'kasir', 'owner') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 2. Kategori (Categories)
-CREATE TABLE IF NOT EXISTS kategori (
+CREATE TABLE kategori (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nama_kategori VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 3. Supplier
-CREATE TABLE IF NOT EXISTS supplier (
+CREATE TABLE supplier (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nama_supplier VARCHAR(100) NOT NULL,
     telepon VARCHAR(20) NOT NULL,
     email VARCHAR(100),
     alamat TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 4. Produk (Products)
-CREATE TABLE IF NOT EXISTS produk (
+CREATE TABLE produk (
     id INT AUTO_INCREMENT PRIMARY KEY,
     foto VARCHAR(255) NULL,
     barcode VARCHAR(50) UNIQUE NULL,
@@ -42,10 +56,10 @@ CREATE TABLE IF NOT EXISTS produk (
     status ENUM('aktif', 'non-aktif') DEFAULT 'aktif',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_kategori) REFERENCES kategori(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 5. Pengeluaran (Expenses)
-CREATE TABLE IF NOT EXISTS pengeluaran (
+CREATE TABLE pengeluaran (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nama_pengeluaran VARCHAR(150) NOT NULL,
     kategori VARCHAR(100) NOT NULL,
@@ -53,10 +67,10 @@ CREATE TABLE IF NOT EXISTS pengeluaran (
     tanggal DATE NOT NULL,
     keterangan TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 6. Penjualan (Sales)
-CREATE TABLE IF NOT EXISTS penjualan (
+CREATE TABLE penjualan (
     id INT AUTO_INCREMENT PRIMARY KEY,
     invoice VARCHAR(50) UNIQUE NOT NULL,
     tanggal DATETIME NOT NULL,
@@ -66,10 +80,10 @@ CREATE TABLE IF NOT EXISTS penjualan (
     kembalian DECIMAL(15,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_kasir) REFERENCES pengguna(id)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 7. Penjualan Detail (Sale Details)
-CREATE TABLE IF NOT EXISTS penjualan_detail (
+CREATE TABLE penjualan_detail (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_penjualan INT NOT NULL,
     id_produk INT NOT NULL,
@@ -79,10 +93,10 @@ CREATE TABLE IF NOT EXISTS penjualan_detail (
     subtotal DECIMAL(15,2) NOT NULL,
     FOREIGN KEY (id_penjualan) REFERENCES penjualan(id) ON DELETE CASCADE,
     FOREIGN KEY (id_produk) REFERENCES produk(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 8. Retur Penjualan (Returns)
-CREATE TABLE IF NOT EXISTS retur (
+CREATE TABLE retur (
     id INT AUTO_INCREMENT PRIMARY KEY,
     invoice_penjualan VARCHAR(50) NOT NULL,
     id_produk INT NOT NULL,
@@ -91,30 +105,18 @@ CREATE TABLE IF NOT EXISTS retur (
     tanggal DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_produk) REFERENCES produk(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 9. Profil Toko (Store Profile)
-CREATE TABLE IF NOT EXISTS profil_toko (
+CREATE TABLE profil_toko (
     id INT PRIMARY KEY DEFAULT 1,
     nama_toko VARCHAR(100) NOT NULL,
     alamat TEXT NOT NULL,
     nomor_hp VARCHAR(20) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    logo VARCHAR(255) NULL
-) ENGINE=InnoDB;
-
--- CLEAR OLD DATA
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE penjualan_detail;
-TRUNCATE TABLE penjualan;
-TRUNCATE TABLE retur;
-TRUNCATE TABLE pengeluaran;
-TRUNCATE TABLE produk;
-TRUNCATE TABLE supplier;
-TRUNCATE TABLE kategori;
-TRUNCATE TABLE pengguna;
-TRUNCATE TABLE profil_toko;
-SET FOREIGN_KEY_CHECKS = 1;
+    logo VARCHAR(255) NULL,
+    slogan VARCHAR(255) DEFAULT 'Sistem Kasir Pintar Digital'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- SEED USERS
 INSERT INTO pengguna (id, nama_lengkap, username, password, role) VALUES
@@ -146,8 +148,8 @@ INSERT INTO produk (id, foto, barcode, nama_produk, id_kategori, harga_beli, har
 (6, NULL, '8992696404178', 'Minyak Goreng Filma Refill 2L', 3, 28500.00, 32500.00, 25, 'aktif'),
 (7, NULL, '8992817210022', 'Gula Pasir Rose Brand 1kg', 3, 13500.00, 16000.00, 60, 'aktif'),
 (8, NULL, '097855117496', 'Mouse Wireless Logitech M170', 4, 110000.00, 135000.00, 12, 'aktif'),
-(9, NULL, '6971253480029', 'Kabel Data Type-C Robot 1m', 4, 12000.00, 20000.00, 4, 'aktif'), -- Menipis status
-(10, NULL, '8993245100033', 'Buku Tulis Kiky A5 38 Lembar', 5, 2500.00, 3500.00, 0, 'aktif'); -- Habis status
+(9, NULL, '6971253480029', 'Kabel Data Type-C Robot 1m', 4, 12000.00, 20000.00, 4, 'aktif'),
+(10, NULL, '8993245100033', 'Buku Tulis Kiky A5 38 Lembar', 5, 2500.00, 3500.00, 0, 'aktif');
 
 -- SEED EXPENSES
 INSERT INTO pengeluaran (id, nama_pengeluaran, kategori, nominal, tanggal, keterangan) VALUES
@@ -156,8 +158,8 @@ INSERT INTO pengeluaran (id, nama_pengeluaran, kategori, nominal, tanggal, keter
 (3, 'Sewa Wifi Toko Juni 2026', 'Operasional', 220000.00, '2026-06-05', 'Indihome 30 Mbps');
 
 -- SEED STORE PROFILE
-INSERT INTO profil_toko (id, nama_toko, alamat, nomor_hp, email, logo) VALUES
-(1, 'SMARTPOS UMKM', 'Jl. Pendidikan No. 123, Komplek SMK Negeri 1, Jakarta Selatan', '0812-3456-7890', 'info@smartpos-umkm.id', NULL);
+INSERT INTO profil_toko (id, nama_toko, alamat, nomor_hp, email, logo, slogan) VALUES
+(1, 'SMARTPOS UMKM', 'Jl. Pendidikan No. 123, Komplek SMK Negeri 1, Jakarta Selatan', '0812-3456-7890', 'info@smartpos-umkm.id', NULL, 'Sistem Kasir Pintar Digital');
 
 -- SEED TRANSACTIONS (PAST 7 DAYS)
 -- Day -6

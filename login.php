@@ -13,13 +13,13 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     session_destroy();
     session_start();
     set_flash('success', 'Berhasil Keluar', 'Anda telah keluar dari aplikasi.');
-    header("Location: /smart-cashier/login.php");
+    header("Location: /login.php");
     exit();
 }
 
 // Jika sudah login, langsung arahkan ke dashboard
 if (isset($_SESSION['user_id'])) {
-    header("Location: /smart-cashier/dashboard/index.php");
+    header("Location: /dashboard/index.php");
     exit();
 }
 
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Set Flash Message
                 set_flash('success', 'Selamat Datang!', 'Selamat bekerja, ' . $user['nama_lengkap'] . '.');
                 
-                header("Location: /smart-cashier/dashboard/index.php");
+                header("Location: /dashboard/index.php");
                 exit();
             } else {
                 $error_message = 'Password yang Anda masukkan salah!';
@@ -76,7 +76,7 @@ include 'layouts/header.php';
             <!-- Header Brand -->
             <div class="flex flex-col items-center mb-8">
                 <?php if (!empty($logo_toko) && file_exists(__DIR__ . '/assets/uploads/' . $logo_toko)): ?>
-                    <img src="/assets/uploads/<?= $logo_toko ?>" alt="Logo" class="w-14 h-14 rounded-2xl object-cover shadow-lg shadow-indigo-100 mb-4">
+                    <img src="/assets/uploads/<?= htmlspecialchars($logo_toko) ?>" alt="Logo" class="w-14 h-14 rounded-2xl object-cover shadow-lg shadow-indigo-100 mb-4">
                 <?php else: ?>
                     <img src="https://ppdb.smkalmujtamak.sch.id/logo-amt.webp" alt="Logo" class="w-14 h-14 rounded-2xl object-cover shadow-lg shadow-indigo-100 mb-4">
                 <?php endif; ?>

@@ -5,10 +5,10 @@
 session_start();
 
 if (isset($_SESSION['user_id'])) {
-    header("Location: /smart-cashier/dashboard/index.php");
+    header("Location: /dashboard/index.php");
     exit();
 } else {
-    header("Location: /smart-cashier/login.php");
+    header("Location: /login.php");
     exit();
 }
 ?>

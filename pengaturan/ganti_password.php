@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <!-- Page Header & Breadcrumbs -->
     <div class="space-y-2">
         <nav class="flex text-xs text-slate-400 space-x-2 mb-2 font-medium">
-            <a href="/smart-cashier/dashboard/index.php" class="hover:text-slate-600">Dashboard</a>
+            <a href="/dashboard/index.php" class="hover:text-slate-600">Dashboard</a>
             <span>/</span>
             <span class="text-slate-600">Pengaturan</span>
             <span>/</span>

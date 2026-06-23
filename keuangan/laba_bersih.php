@@ -9,7 +9,7 @@ include '../layouts/navbar.php';
 // Validasi Hak Akses: Admin dan Owner
 if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'owner') {
     set_flash('error', 'Akses Ditolak', 'Halaman ini hanya dapat diakses oleh Administrator atau Owner!');
-    echo "<script>window.location.href='/smart-cashier/dashboard/index.php';</script>";
+    echo "<script>window.location.href='/dashboard/index.php';</script>";
     exit();
 }
 
@@ -45,7 +45,7 @@ $laba_bersih = $laba_kotor - $pengeluaran;
     <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
         <div>
             <nav class="flex text-xs text-slate-400 space-x-2 mb-2 font-medium">
-                <a href="/smart-cashier/dashboard/index.php" class="hover:text-slate-600">Dashboard</a>
+                <a href="/dashboard/index.php" class="hover:text-slate-600">Dashboard</a>
                 <span>/</span>
                 <span class="text-slate-600">Keuangan</span>
                 <span>/</span>
